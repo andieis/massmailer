@@ -1,0 +1,30 @@
+<html>
+    <head>
+        <style>
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Mass Mailer - Documentation</h1>
+        <ol>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#limitations">Limitations</a></li>
+            <!--li><a href="#installation">Installation</a></li-->
+            <li><a href="#gettingstarted">Getting started</a></li>
+        </ol>
+        <h2 id="introduction">Introduction</h2>
+        <p>The Mass Mailer is an very easy tool to send E-Mails over smtp to many addresses. You are able to add variables to the text and customize every E-Mail independent.</p>
+        <h2 id="limitations">Limitations</h2>
+        <p>At the moment you cannot send E-Mails that contains attachement or are written in HTML.</p>
+        <!--h2 id="installation">Installation</h2>
+        <p>To install the Mass Mailer, simply download the zip. Unpack it wherever you like it. Simply double-click on the MassMailer.exe to run the program.</p-->
+        <h2 id="gettingstarted">Getting Started</h2>
+        <p>To get started, you need the smtp informations of your provider. Please find them (host, port, user, password) yourself.
+            After having the credentials, enter them to the interface. Once used, the last entry is stored for further uses (except the password). To test the connection you can hit "Test connection". After that, you can import your e-mail addresses. They need to be stored in a csv file. In the same file you should store all potential variables.
+            Now you have to choose the field, that contains the email-addresses. Select them from the dropdown. Now you can write your Text. Everytime you need a variable, simply choose your variable from the dropdown and hit "Add Variable". It adds now the internal Format for Variables. You can also enter them manually. Be sure, to add everytime the prefix $? and the suffix ?$ to the variable.
+            If you would like to view, how it looks with data, you can click on the "Show Preview" Button. Does it looks as excpected? If so, you can hit "Send Mails". If not, you can hide the preview and do your changes and review it again.
+        </p>
+    </body>
+</html>
