@@ -378,11 +378,11 @@ p, li { white-space: pre-wrap; }
   </action>
  </widget>
  <tabstops>
-  <tabstop>lE_pw</tabstop>
   <tabstop>lE_host</tabstop>
+  <tabstop>lE_user</tabstop>
+  <tabstop>lE_pw</tabstop>
   <tabstop>lE_port</tabstop>
   <tabstop>lE_sender</tabstop>
-  <tabstop>pB_testconn</tabstop>
   <tabstop>lE_subject</tabstop>
   <tabstop>pB_loaddata</tabstop>
   <tabstop>pB_addVar</tabstop>
@@ -394,7 +394,7 @@ p, li { white-space: pre-wrap; }
   <tabstop>pB_nextpreview</tabstop>
   <tabstop>textEdit</tabstop>
   <tabstop>pB_send</tabstop>
-  <tabstop>lE_user</tabstop>
+  <tabstop>pB_testconn</tabstop>
  </tabstops>
  <resources/>
  <connections/>
