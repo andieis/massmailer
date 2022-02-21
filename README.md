@@ -1,5 +1,5 @@
-# massmailer
-Small Programm to easily send customized Mails to many receiver
+# Mass Mailer
+Small Programm to easily send customized Mails to many receivers. For further informations see www.andieis.ch/massmailer.
 
 # Issues / Feature Requests
 If you see an issue or have a feature request, please create an issue here on github. It will be answered and solved as soon as possible.
