@@ -1,5 +1,13 @@
 from PyQt5.uic import loadUi
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QProgressBar, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QMainWindow,
+    QApplication,
+    QFileDialog,
+    QMessageBox,
+    QDialog,
+    QProgressBar,
+    QVBoxLayout,
+)
 from PyQt5.QtCore import Qt, QThread, pyqtSignal, QUrl
 from py.txtimport import txtImport
 from py.about import AboutWindow
@@ -40,13 +48,15 @@ class MainWindow(QMainWindow):
         self.lE_sender.setText(inputs["sendermail"])
 
     def loaddata(self):
-        file_path = QFileDialog.getOpenFileName(self, "Load Data...", filter="Text files (*.txt *.csv);;All Files (*.*)")[0]
+        file_path = QFileDialog.getOpenFileName(
+            self, "Load Data...", filter="Text files (*.txt *.csv);;All Files (*.*)"
+        )[0]
         self.path_coords = file_path.split("/")[-1]
         if file_path == "":
             return
 
         data = []
-        with open(file_path) as file:
+        with open(file_path, encoding="utf-8") as file:
             [data.append(row.splitlines()[0]) for row in file]
 
         self.txtImportWindow = txtImport(data)
@@ -126,17 +136,35 @@ class MainWindow(QMainWindow):
         else:
             msg_string = self.textEdit.toPlainText()
         if not subject:
-            ret = QMessageBox.information(self, "No subject", "You haven't filled a subject. Would you like to send the E-Mail without subject?", QMessageBox.Yes | QMessageBox.No)
+            ret = QMessageBox.information(
+                self,
+                "No subject",
+                "You haven't filled a subject. Would you like to send the E-Mail without subject?",
+                QMessageBox.Yes | QMessageBox.No,
+            )
             if ret == QMessageBox.No:
                 return
         if not (host and port and user and pw and sender_email):
             QMessageBox.warning(self, "Not filled", "Please fill all fields and retry")
             return
         if not receiver:
-            QMessageBox.warning(self, "No Receiver", "Please select a Receiver from the dropdown!")
+            QMessageBox.warning(
+                self, "No Receiver", "Please select a Receiver from the dropdown!"
+            )
             return
         receiver_index = self.header.index(receiver)
-        thread = sending(host, port, user, pw, msg_string, subject, sender_email, receiver_index, self.data, self.header)
+        thread = sending(
+            host,
+            port,
+            user,
+            pw,
+            msg_string,
+            subject,
+            sender_email,
+            receiver_index,
+            self.data,
+            self.header,
+        )
         thread.sended.connect(self.sended)
         thread.success.connect(self.success)
         thread.error.connect(self.error)
@@ -157,11 +185,17 @@ class MainWindow(QMainWindow):
         self.progbar.setValue(num)
 
     def success(self):
-        QMessageBox.information(self, "Sending successfull", "All E-Mails were sent successfully.")
+        QMessageBox.information(
+            self, "Sending successfull", "All E-Mails were sent successfully."
+        )
         self.progressdialog.close()
 
     def error(self, e, i, addr):
-        QMessageBox.warning(self, "Could not connect", f"The connection failed. Please check the input and retry. Error occured at element {i} ({addr}). Error: {e}")
+        QMessageBox.warning(
+            self,
+            "Could not connect",
+            f"The connection failed. Please check the input and retry. Error occured at element {i} ({addr}). Error: {e}",
+        )
         self.progressdialog.close()
 
     def insertvars(self, dataindex, msg_string):
@@ -173,7 +207,6 @@ class MainWindow(QMainWindow):
         msg_split = "".join(msg_split)
         return msg_split
 
-
     def testconn(self):
         host = self.lE_host.text()
         port = self.lE_port.text()
@@ -183,11 +216,18 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Not filled", "Please fill all fields and retry")
         context = ssl.create_default_context()
         try:
-            with smtplib.SMTP_SSL(host, port, context=context) as server:
+            with smtplib.SMTP(host, port) as server:
+                server.starttls(context=context)
                 server.login(user, pw)
-            QMessageBox.information(self, "Connection successful", "The connection was successfull.")
+            QMessageBox.information(
+                self, "Connection successful", "The connection was successfull."
+            )
         except Exception as e:
-            QMessageBox.warning(self, "Could not connect", f"The connection failed. Please check the input and retry. Error: {e}")
+            QMessageBox.warning(
+                self,
+                "Could not connect",
+                f"The connection failed. Please check the input and retry. Error: {e}",
+            )
         self.saveInputs()
 
     def saveInputs(self):
@@ -196,12 +236,7 @@ class MainWindow(QMainWindow):
         user = self.lE_user.text()
         sendermail = self.lE_sender.text()
 
-        inputs = {
-            "host": host,
-            "port": port,
-            "user": user,
-            "sendermail": sendermail
-        }
+        inputs = {"host": host, "port": port, "user": user, "sendermail": sendermail}
 
         with open("inputs.json", "w") as file:
             json.dump(inputs, file)
@@ -227,7 +262,20 @@ class sending(QThread):
     sended = pyqtSignal(int)
     success = pyqtSignal()
     error = pyqtSignal(Exception, int, str)
-    def __init__(self, host, port, user, pw, msg_string, subject, sender_email, receiver_index, data, header):
+
+    def __init__(
+        self,
+        host,
+        port,
+        user,
+        pw,
+        msg_string,
+        subject,
+        sender_email,
+        receiver_index,
+        data,
+        header,
+    ):
         super(sending, self).__init__()
         self.roundnum = 1
         self.host = host
@@ -243,8 +291,9 @@ class sending(QThread):
 
     def run(self):
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(self.host, self.port, context=context) as server:
+        with smtplib.SMTP(self.host, self.port) as server:
             try:
+                server.starttls(context=context)
                 server.login(self.user, self.pw)
             except Exception as e:
                 self.error.emit(e, 0, "Connection error")
@@ -254,20 +303,21 @@ class sending(QThread):
                 try:
                     msg = EmailMessage()
                     msg.set_content(self.insertvars(i, self.msg_string))
-                    msg['Subject'] = self.insertvars(i, self.subject)
-                    msg['From'] = self.sender_email
-                    msg['To'] = self.data[i][self.receiver_index]
+                    msg["Subject"] = self.insertvars(i, self.subject)
+                    msg["From"] = self.sender_email
+                    msg["To"] = self.data[i][self.receiver_index]
                     server.send_message(msg)
                     self.sended.emit(self.roundnum)
                     self.roundnum += 1
                 except Exception as e:
-                    self.error.emit(e, self.roundnum - 1, self.data[i][self.receiver_index])
+                    self.error.emit(
+                        e, self.roundnum - 1, self.data[i][self.receiver_index]
+                    )
                     self.exit()
                     return
         self.success.emit()
         self.exit()
 
-            
     def insertvars(self, dataindex, msg_string):
         msg_split = msg_string.split("$?")
         for i in range(1, len(msg_split)):
